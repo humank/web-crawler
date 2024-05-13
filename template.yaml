@@ -1,0 +1,72 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Web Crawler Lambda Function
+
+Resources:
+  WebCrawlerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: target/webcrawler.jar
+      Handler: com.amazonaws.devtx.webcrawler.presentation.lambda.WebCrawlerLambda::handleRequest
+      Runtime: java17
+      Policies:
+        - AWSLambdaBasicExecutionRole
+
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+
+  WebCrawlerResource:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      ApiId: !Ref ApiGatewayApi
+      RouteKey: GET /crawl
+      Target: !Join
+        - ''
+        - - 'arn:aws:appsync:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':datasource/lambda'
+          - !Join
+            - /
+            - - !GetAtt WebCrawlerFunction.FunctionArn
+              - prod
+    Type: AWS::Serverless::Resource
+    Properties:
+      ParentId: !GetAtt ApiGatewayApi.RootResourceId
+      PathPart: crawl
+      RestApiId: !Ref ApiGatewayApi
+      ResourceId: !Ref WebCrawlerMethod
+
+  WebCrawlerMethod:
+    Type: AWS::Serverless::Method
+    Properties:
+      ResourceId: !Ref WebCrawlerResource
+      RestApiId: !Ref ApiGatewayApi
+      HttpMethod: POST
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${WebCrawlerFunction.Arn}/invocations'
+
+  WebCrawlerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref WebCrawlerFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayApi}/*/${ApiGatewayApi.Stage}/POST/crawl'
+
+  ApiGatewayDeployment:
+    Type: AWS::Serverless::Deployment
+    Properties:
+      RestApiId: !Ref ApiGatewayApi
+      DependsOn:
+        - WebCrawlerMethod
+
+Outputs:
+  WebCrawlerApi:
+    Description: API Gateway endpoint URL for the Web Crawler function
+    Value: !Sub 'https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/crawl/'
