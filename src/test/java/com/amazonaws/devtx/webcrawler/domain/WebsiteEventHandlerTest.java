@@ -1,10 +1,7 @@
-package com.amazonaws.devtx.webcrawler.domain.tests;
-
-import static org.mockito.Mockito.*;
+package com.amazonaws.devtx.webcrawler.domain;
 
 import org.junit.jupiter.api.Test;
 
-import com.amazonaws.devtx.webcrawler.domain.Website;
 import com.amazonaws.devtx.webcrawler.domain.events.WebsiteEvent;
 import com.amazonaws.devtx.webcrawler.application.eventhandlers.WebsiteEventHandler;
 

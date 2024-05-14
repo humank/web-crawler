@@ -1,11 +1,10 @@
 package com.amazonaws.devtx.webcrawler.domain.services;
 
-import com.amazonaws.devtx.webcrawler.domain.WebCrawler;
+import com.amazonaws.devtx.webcrawler.adapters.webcrawler.WebCrawlerPort;
 import com.amazonaws.devtx.webcrawler.domain.WebCrawlerService;
 import com.amazonaws.devtx.webcrawler.domain.Website;
 import com.amazonaws.devtx.webcrawler.domain.WebsiteRepository;
 import com.amazonaws.devtx.webcrawler.domain.events.WebsiteEvent;
-import com.amazonaws.devtx.webcrawler.infrastructure.webcrawler.WebCrawlerImpl;
 import org.springframework.context.ApplicationEventPublisher;
 
 
@@ -15,12 +14,12 @@ import java.util.Set;
 public class WebCrawlerServiceImpl implements WebCrawlerService {
     private final WebsiteRepository websiteRepository;
     private final ApplicationEventPublisher eventPublisher;
-    private final WebCrawler webCrawler;
+    private final WebCrawlerPort webCrawler;
 
-    public WebCrawlerServiceImpl(WebsiteRepository websiteRepository, ApplicationEventPublisher eventPublisher) {
+    public WebCrawlerServiceImpl(WebsiteRepository websiteRepository, ApplicationEventPublisher eventPublisher, WebCrawlerPort webCrawler) {
         this.websiteRepository = websiteRepository;
         this.eventPublisher = eventPublisher;
-        this.webCrawler = new WebCrawlerImpl();
+        this.webCrawler = webCrawler;
     }
 
     @Override
@@ -40,6 +39,7 @@ public class WebCrawlerServiceImpl implements WebCrawlerService {
 
     // Invariant: crawledLinks should not contain duplicates
     private void checkInvariant(Set<String> crawledLinks) {
+        // Implementation details
         if (crawledLinks.size() != new HashSet<>(crawledLinks).size()) {
             throw new IllegalStateException("Invariant violated: crawledLinks contains duplicates");
         }

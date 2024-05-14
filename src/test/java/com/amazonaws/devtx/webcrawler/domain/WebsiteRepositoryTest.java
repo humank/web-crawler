@@ -1,8 +1,5 @@
-package com.amazonaws.devtx.webcrawler.domain.tests;
+package com.amazonaws.devtx.webcrawler.domain;
 
-import com.amazonaws.devtx.webcrawler.domain.Website;
-import com.amazonaws.devtx.webcrawler.domain.WebsiteRepository;
-import com.amazonaws.devtx.webcrawler.domain.WebsiteSpecification;
 import com.amazonaws.devtx.webcrawler.infrastructure.persistence.WebsiteRepositoryImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

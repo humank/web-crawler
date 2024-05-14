@@ -1,5 +1,7 @@
 package com.amazonaws.devtx.webcrawler.configuration;
 
+import com.amazonaws.devtx.webcrawler.adapters.webcrawler.WebCrawlerPort;
+import com.amazonaws.devtx.webcrawler.infrastructure.webcrawler.WebCrawlerImpl;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,8 +24,13 @@ public class WebCrawlerConfiguration {
     }
 
     @Bean
+    public WebCrawlerPort webCrawler(){
+        return new WebCrawlerImpl();
+    }
+
+    @Bean
     public WebCrawlerServiceImpl webCrawlerService(WebsiteRepositoryImpl websiteRepository, ApplicationEventPublisher eventPublisher) {
-        return new WebCrawlerServiceImpl(websiteRepository, eventPublisher);
+        return new WebCrawlerServiceImpl(websiteRepository, eventPublisher, webCrawler());
     }
 
 }

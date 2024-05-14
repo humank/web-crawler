@@ -1,8 +1,6 @@
-package com.amazonaws.devtx.webcrawler.domain.tests;
+package com.amazonaws.devtx.webcrawler.domain;
 
-import com.amazonaws.devtx.webcrawler.domain.Website;
-import com.amazonaws.devtx.webcrawler.domain.WebCrawlerService;
-import com.amazonaws.devtx.webcrawler.domain.WebsiteRepository;
+import com.amazonaws.devtx.webcrawler.adapters.webcrawler.WebCrawlerPort;
 import com.amazonaws.devtx.webcrawler.domain.services.WebCrawlerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,12 +17,15 @@ public class WebCrawlerServiceTest {
     @Mock
     private ApplicationEventPublisher eventPublisher;
 
+    @Mock
+    private WebCrawlerPort webCrawler;
+
     private WebCrawlerService webCrawlerService;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        webCrawlerService = new WebCrawlerServiceImpl(websiteRepository, eventPublisher);
+        webCrawlerService = new WebCrawlerServiceImpl(websiteRepository, eventPublisher,webCrawler);
     }
 
     @Test

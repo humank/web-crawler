@@ -1,6 +1,5 @@
-package com.amazonaws.devtx.webcrawler.domain.tests;
+package com.amazonaws.devtx.webcrawler.domain;
 
-import com.amazonaws.devtx.webcrawler.domain.Website;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
